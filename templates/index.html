@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流量监控</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>流量监控</h1>
+        <label for="port">请输入端口号：</label>
+        <input type="text" id="port" placeholder="例如：10001">
+        <button onclick="fetchTraffic()">查看流量</button>
+
+        <div id="result" class="result">
+            <p>流量数据将在此显示...</p>
+        </div>
+    </div>
+
+    <script>
+        function fetchTraffic() {
+            const port = document.getElementById('port').value;
+            if (port) {
+                $.get(`/get_traffic?port=${port}`, function(data) {
+                    if (data.error) {
+                        $('#result').html(`<p style="color: red;">错误: ${data.error}</p>`);
+                    } else {
+                        // 判断到期时间
+                        let expirationColor = 'blue'; // 默认正常为蓝色
+                        let blockedColor = 'blue'; // 默认状态正常为蓝色
+                        let expirationText = data.expiration_time;
+
+                        // 当前时间和到期时间进行比较
+                        if (expirationText !== "长期") {
+                            const currentTime = new Date();
+                            const expirationTime = new Date(expirationText);
+                            if (expirationTime < currentTime) {
+                                expirationColor = 'red'; // 如果过期，显示红色
+                            }
+                        }
+
+                        // 判断阻断状态
+                        if (data.blocked) {
+                            blockedColor = 'red'; // 阻断状态显示为红色
+                        }
+
+                        // 显示流量数据和状态
+                        $('#result').html(`
+                            <p><strong>端口：</strong> ${port}</p>
+                            <p><strong>更新时间：</strong> ${data.timestamp}</p>
+                            <p><strong>包数目：</strong> ${data.packet_count}</p>
+                            <p><strong>流量：</strong> ${data.formatted_traffic}</p>
+                            <p><strong>最大流量限制：</strong> ${data.limit}</p>
+                            <p style="color: ${expirationColor};"><strong>到期时间：</strong> ${expirationText}</p>
+                            <p style="color: ${blockedColor};"><strong>状态：</strong> ${data.blocked ? "已阻断" : "正常"}</p>
+                        `);
+                    }
+                }).fail(function() {
+                    $('#result').html('<p style="color: red;">无法获取流量数据，请稍后再试。</p>');
+                });
+            } else {
+                $('#result').html('<p style="color: red;">请提供端口号。</p>');
+            }
+        }
+    </script>
+</body>
+</html>
