@@ -76,3 +76,8 @@ flow_information 当前流量消耗信息 packet_count 流量包数目 timestamp
 restrict_traffic 预设流量信息 blocked 是否被阻断（false正常 true被防火墙阻断，一般为超流量或到期）limit 预设流量
 返回 错误200、500
 ```
+
+# 通用错误
+403 -密钥错误 \
+400 -请求内容错误 \
+500 -服务器内部错误（目前没做异常处理）
