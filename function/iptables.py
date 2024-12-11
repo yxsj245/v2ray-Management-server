@@ -6,9 +6,9 @@ def save_iptables():
 
     try:
         subprocess.run(command, shell=True, check=True)
-        print(f"保存成功")
+        print(f"保存防火墙配置成功")
     except subprocess.CalledProcessError as e:
-        print(f"添加阻止端口出错 {e}")
+        print(f"报错防火墙错误 {e}")
 
 # 添加端口记录
 def add_iptables_rule(port):

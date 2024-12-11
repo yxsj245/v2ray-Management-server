@@ -1,8 +1,6 @@
-import json
 import os
 import time
 from datetime import datetime
-import subprocess
 import schedule
 
 import function.internet as internet
@@ -21,10 +19,22 @@ def check_expired_ports():
 
     print(f"正在检查过期端口 {current_time.strftime('%Y-%m-%d %H:%M:%S')}...")
 
-    for port, expiration_time_str in time_data.items():
-        expiration_time = datetime.strptime(expiration_time_str, "%Y-%m-%d %H:%M:%S")
+    for port, expiration_time_list in time_data.items():
+        # 直接取第一个值
+        expiration_time_str = expiration_time_list[0] if isinstance(expiration_time_list,
+                                                                    list) and expiration_time_list else None
 
-        print(f"端口 {port} 到期日 {expiration_time.strftime('%Y-%m-%d %H:%M:%S')}")
+        if not expiration_time_str:
+            print(f"端口 {port} 的到期时间格式错误：{expiration_time_list}")
+            continue
+
+        try:
+            expiration_time = datetime.strptime(expiration_time_str, "%Y-%m-%d %H:%M:%S")
+        except ValueError as e:
+            print(f"端口 {port} 的到期时间无法解析：{expiration_time_str}，错误：{e}")
+            continue
+
+        # print(f"端口 {port} 到期日 {expiration_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
         port_limits = internet.read_file("portinternet.json")
 
@@ -37,9 +47,7 @@ def check_expired_ports():
             iptables.add_iptables_blackrule(port)
 
             port_limits[port]["blocked"] = True
-            internet.write_file("portinternet.json",port_limits)
-        # else:
-        #     print(f"端口 {port} 尚未过期。")
+            internet.write_file("portinternet.json", port_limits)
 
 
 # 固定事件

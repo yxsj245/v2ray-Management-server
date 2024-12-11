@@ -199,3 +199,27 @@ def delete_blocked_ports():
             delete_port_entry(int(port))  # 调用 delete_port_entry 并传递端口号
         else:
             print('没有需要删除的端口')
+
+# 查看到期时间 提交端口返回到期时间
+def Expiration_date(port):
+    try:
+        fanhui = read_file('time_data.json')[str(port)][0]
+        return fanhui
+    except Exception as e:
+        return '参数错误'
+
+# 查看限制流量 提交端口返回预设流量和当前状态
+def Restrict_traffic(port):
+    try:
+        fanhui = read_file('portinternet.json')[str(port)]
+        return fanhui
+    except Exception as e:
+        return '参数错误'
+
+# 查看流量信息 提交端口返回最后更新时间，包数目，当前流量字节
+def flow_information(port):
+    try:
+        fanhui = read_file('data.json')[str(port)][0]
+        return fanhui
+    except Exception as e:
+        return '参数错误'
