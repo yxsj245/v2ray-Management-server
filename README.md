@@ -26,3 +26,6 @@ gunicorn --reload -w 1 -b 0.0.0.0:5001 web:app（可选）
 #### 请注意，上面每个指令对应一个终端服务，请勿全部复制粘贴执行，应当一个个执行并挂入后台
 前两条若执行失败，请将`python3`改成`python` \
 新手可以搭配MCSManager或其它面板管理各个服务进程
+
+# 文档
+[>>API文档](https://github.com/yxsj245/v2ray-Management/blob/server/api.md)
