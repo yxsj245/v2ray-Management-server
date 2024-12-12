@@ -72,3 +72,61 @@ def checkv2ray(port):
     except subprocess.CalledProcessError as e:
         print(f"命令执行失败: {e}")
         return False
+
+# 更新UUID
+def resetuuid(port):
+    # 固定端口号
+    port = port
+
+    # 随机生成UUID
+    generated_uuid = str(uuid.uuid4())
+
+    # 构建命令
+    command = f"v2ray id VMess-TCP-{port} {generated_uuid}"
+
+    # 执行命令并获取输出
+    try:
+        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+        output = result.stdout
+        # print("命令执行成功，输出：")
+        # print(output)
+
+        # 使用正则表达式提取 vmess:// 后面的 URL
+        match = re.search(r'vmess://([A-Za-z0-9+/=]+)', output)
+        if match:
+            url = match.group(0)  # 获取整个匹配的字符串
+            # print("提取到的 URL:", url)
+            return url
+        else:
+            print("未找到 URL")
+            return False
+
+    except subprocess.CalledProcessError as e:
+        print(f"命令执行失败: {e}")
+        return False
+
+# 更新端口
+def resetport(current_port,port):
+
+    # 构建命令
+    command = f"v2ray port VMess-TCP-{current_port} {port}"
+
+    # 执行命令并获取输出
+    try:
+        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+        output = result.stdout
+        # print("命令执行成功，输出：")
+        # print(output)
+
+        # 使用正则表达式提取 vmess:// 后面的 URL
+        match = re.search(r'vmess://([A-Za-z0-9+/=]+)', output)
+        if match:
+            url = match.group(0)  # 获取整个匹配的字符串
+            # print("提取到的 URL:", url)
+            return url
+        else:
+            print("未找到 URL")
+            return False
+    except subprocess.CalledProcessError as e:
+        print(f"命令执行失败: {e}")
+        return False

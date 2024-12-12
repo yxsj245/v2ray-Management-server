@@ -11,6 +11,13 @@ def write_file(file,data):
     with open(file, "w") as f:
         json.dump(data, f, indent=4)
 
+# 更新
+def replace_key_in_dict(obj, old_key, new_key):
+    if old_key in obj:
+        obj[new_key] = obj.pop(old_key)
+    return obj
+
+
 # 增加记录端口
 def add_port_to_json(port, filename='ports.json'):
     # 检查文件是否存在
