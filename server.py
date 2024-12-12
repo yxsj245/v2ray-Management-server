@@ -47,6 +47,29 @@ def receive_data():
     else:
         return jsonify(error="接口密钥错误"), 405
 
+# 新增梯子按量
+@app.route('/add/node_measure', methods=['POST'])
+def receive_data_6():
+    data = request.get_json()  # 获取 POST 请求中的 JSON 数据
+    if not data:
+        return jsonify(error="请求内容有误"), 400
+
+    port = data.get('port')
+    internet = data.get('internet')
+    apikeyverify = data.get('apikey')
+    if apikeyverify == apikey:
+        # 开通v2ray
+        vmess = v2ray.addV2ray(port)
+        # 创建防火墙
+        iptables.add_iptables_rule(port)
+        # 增加端口记录
+        internets.add_port_to_json(port)
+        # 设置预设流量
+        internets.set_preset_traffic(port,internet)
+        return jsonify(message=vmess),200
+    else:
+        return jsonify(error="接口密钥错误"), 405
+
 # 更新梯子信息
 @app.route('/update/node', methods=['POST'])
 def receive_data_2():
@@ -70,6 +93,60 @@ def receive_data_2():
             internets.update_preset_traffic(port, internet)
             return jsonify(message=f"流量更新成功"), 200
         return jsonify(error="未找到的操作类型"), 405
+    else:
+        return jsonify(error="接口密钥错误"), 405
+
+# 更新梯子uuid
+@app.route('/update/node_uuid', methods=['POST'])
+def receive_data_7():
+    data = request.get_json()  # 获取 POST 请求中的 JSON 数据
+    if not data:
+        return jsonify(error="请求内容有误"), 400
+
+    port = data.get('port')
+    apikeyverify = data.get('apikey')
+
+    if apikeyverify == apikey:
+        vmess = v2ray.resetuuid(port)
+        return jsonify(message=vmess), 200
+    else:
+        return jsonify(error="接口密钥错误"), 405
+
+# 更换端口
+@app.route('/update/port', methods=['POST'])
+def receive_data_8():
+    data = request.get_json()  # 获取 POST 请求中的 JSON 数据
+    if not data:
+        return jsonify(error="请求内容有误"), 400
+
+    current_portdata = data.get('current_port')
+    portdata = data.get('port')
+    apikeyverify = data.get('apikey')
+
+    if apikeyverify == apikey:
+        vmess = v2ray.resetport(current_portdata,portdata)
+
+        # 更新端口到期时间
+        original_dict = internets.read_file('time_data.json')
+        internets.replace_key_in_dict(original_dict,str(portdata),str(current_portdata))
+        internets.write_file('time_data.json',original_dict)
+
+        # 更新预设流量
+        original_dict = internets.read_file('portinternet.json')
+        internets.replace_key_in_dict(original_dict,str(portdata),str(current_portdata))
+        internets.write_file('portinternet.json',original_dict)
+
+        # 更新预data
+        original_dict = internets.read_file('data.json')
+        internets.replace_key_in_dict(original_dict,str(portdata),str(current_portdata))
+        internets.write_file('data.json',original_dict)
+
+        # 更新监听端口
+        ports_data = internets.read_file('ports.json')
+        ports_data["ports"] = [current_portdata if port == portdata else port for port in ports_data["ports"]]
+        internets.write_file('ports.json',ports_data)
+
+        return jsonify(message=vmess), 200
     else:
         return jsonify(error="接口密钥错误"), 405
 
