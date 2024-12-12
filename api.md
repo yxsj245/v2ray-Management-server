@@ -1,7 +1,7 @@
 请求地址 IP+端口（默认5000）\
 例如：0.0.0.0:5000/对应功能的接口地址 \
 请在`server.py`找到apikey变量并修改密钥
-# 添加配置
+# 添加配置（按月）
 地址：`/add/node` \
 请求方式 `POST` \
 请求类型Headers：`Content-Type:application/json` \
@@ -18,13 +18,29 @@ apikey：接口密钥（str）
 "message": false
 ```
 
+# 添加配置（按量）
+地址：`/add/node_measure` \
+请求方式 `POST` \
+请求类型Headers：`Content-Type:application/json` \
+请求Body：
+```
+port:需要开通的端口号（int）
+internet：预设流量（int）
+apikey：接口密钥（str）
+
+返回 正确200
+ "message": "vmess..."
+返回 错误200
+"message": false
+```
+
 # 更新配置信息
 地址：`/update/node` \
 请求方式 `POST` \
 请求类型Headers：`Content-Type:application/json` \
 请求Body：
 ```
-port:需要开通的端口号（str）
+port:需要更新的端口号（str）
 time：该端口的到期时间 根据类型需要填写（str）
 internet：预设流量 根据类型需要填写（int）
 type：更新的类型`updatetime`/`updateinternet` 更新时间/更新流量 （str）
@@ -33,13 +49,45 @@ apikey：接口密钥（str）
 返回 正确200
 返回 错误500
 ```
+
+# 更新配置uuid
+地址：`/update/node_uuid` \
+请求方式 `POST` \
+请求类型Headers：`Content-Type:application/json` \
+请求Body：
+```
+port:需要更新的端口号（int）
+apikey：接口密钥（str）
+
+返回 正确200
+ "message": "vmess..."
+返回 错误200
+"message": false
+```
+
+# 更换配置端口
+地址：`/update/port` \
+请求方式 `POST` \
+请求类型Headers：`Content-Type:application/json` \
+请求Body：
+```
+port:需要更换的端口号（int）
+current_port：该端口更换到的端口（int）
+apikey：接口密钥（str）
+
+返回 正确200
+ "message": "vmess..."
+返回 错误200
+"message": false
+```
+
 # 删除配置
 地址：`/remove/node` \
 请求方式 `POST` \
 请求类型Headers：`Content-Type:application/json` \
 请求Body：
 ```
-port:需要开通的端口号（int）
+port:需要删除的端口号（int）
 apikey：接口密钥（str）
 
 返回 正确200
@@ -55,7 +103,7 @@ apikey：接口密钥（str）
 "message": "vmess..."
 返回 错误500
 ```
-port:需要开通的端口号（int）
+port:需要查看的端口号（int）
 apikey：接口密钥（str）
 ```
 # 查看配置订阅相关信息
@@ -68,7 +116,7 @@ apikey：接口密钥（str）
 "message": "vmess..."
 返回 错误500
 ```
-port:需要开通的端口号（int）
+port:需要查看的端口号（int）
 
 返回 正确200
 expiration_date 到期时间
