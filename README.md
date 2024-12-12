@@ -38,3 +38,4 @@ gunicorn --reload -w 1 -b 0.0.0.0:5001 web:app（可选）
 
 # 文档
 [>>API文档](https://github.com/yxsj245/v2ray-Management/blob/server/api.md)
+[>>前端项目](https://github.com/yxsj245/v2ray-Management-web)
