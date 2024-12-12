@@ -5,7 +5,7 @@ import function.internet as internets
 import function.iptables as iptables
 
 # 设置关键地址的校验
-apikey = 'vcvQW3SIwqgoSWCyUwq7cokt0sMLyiCd'
+apikey = '替换为密钥'
 
 # 创建 Flask 应用
 app = Flask(__name__)
