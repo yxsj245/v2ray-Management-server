@@ -17,7 +17,6 @@ def replace_key_in_dict(obj, old_key, new_key):
         obj[new_key] = obj.pop(old_key)
     return obj
 
-
 # 增加记录端口
 def add_port_to_json(port, filename='ports.json'):
     # 检查文件是否存在
@@ -85,11 +84,15 @@ def update_expiration_time(port, expiration_time):
     try:
         with open('time_data.json', 'r') as file:
             data = json.load(file)
+
+        with open('portinternet.json', 'r') as file:
+            dataportinternet = json.load(file)
     except FileNotFoundError:
         # 如果文件不存在，初始化数据
         data = {}
 
     del data[port]  # 删除指定端口的条目
+    dataportinternet[port]['blocked'] = False
 
     # 添加新的到期时间
     data[port] = [expiration_time]
@@ -97,6 +100,8 @@ def update_expiration_time(port, expiration_time):
     # 将更新后的数据写回文件
     with open('time_data.json', 'w') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+    with open('portinternet.json', 'w') as file:
+        json.dump(dataportinternet, file, ensure_ascii=False, indent=4)
 
 # 更新 预设流量
 def update_preset_traffic(port,limit):
